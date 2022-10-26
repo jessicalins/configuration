@@ -4,6 +4,7 @@ local memcached = (import 'github.com/observatorium/observatorium/configuration/
 local telemeterRules = (import 'github.com/openshift/telemeter/jsonnet/telemeter/rules.libsonnet');
 local metricFederationRules = (import '../configuration/observatorium/metric-federation-rules.libsonnet');
 local remoteWriteConfig = (import '../configuration/observatorium/ruler-remote-write.libsonnet');
+local rlc = (import '../configuration/observatorium/request-logging.libsonnet');
 local tenants = (import '../configuration/observatorium/tenants.libsonnet');
 local oauthProxy = import './sidecars/oauth-proxy.libsonnet';
 
@@ -609,7 +610,17 @@ local oauthProxy = import './sidecars/oauth-proxy.libsonnet';
               containers: [
                 if x.name == 'thanos-query'
                 then x {
-                  args+: ['--store.sd-files=/etc/thanos/sd/file_sd.yaml'],
+                  args+: [
+                    '--store.sd-files=/etc/thanos/sd/file_sd.yaml',
+                    '--request.logging-config=' + rlc.requestLoggingConfig(
+                      [{ path: '/api/v1/query', port: 9090 }],
+                      [
+                        { service: 'thanos.Query', method: 'Query' },
+                        { service: 'thanos.Query', method: 'QueryRange' },
+                      ],
+                      '${THANOS_QUERIER_LOG_LEVEL}'
+                    ),
+                  ],
                   volumeMounts+: [{
                     mountPath: '/etc/thanos/sd',
                     name: 'file-sd',

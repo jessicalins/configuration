@@ -1353,6 +1353,27 @@ objects:
             "type": "JAEGER"
           - --query.auto-downsampling
           - --store.sd-files=/etc/thanos/sd/file_sd.yaml
+          - |-
+            --request.logging-config="grpc":
+              "config":
+              - "method": "Query"
+                "service": "thanos.Query"
+              - "method": "QueryRange"
+                "service": "thanos.Query"
+              "options":
+                "decision":
+                  "log_end": true
+                  "log_start": false
+                "level": "${THANOS_QUERIER_LOG_LEVEL}"
+            "http":
+              "config":
+              - "path": "/api/v1/query"
+                "port": 9090
+              "options":
+                "decision":
+                  "log_end": true
+                  "log_start": true
+                "level": "${THANOS_QUERIER_LOG_LEVEL}"
           env:
           - name: HOST_IP_ADDRESS
             valueFrom:
