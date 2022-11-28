@@ -1647,7 +1647,7 @@ objects:
         containers:
         - args:
           - query-frontend
-          - --log.level=info
+          - --log.level=${THANOS_QUERY_FRONTEND_LOG_LEVEL}
           - --log.format=logfmt
           - --query-frontend.compress-responses
           - --http-address=0.0.0.0:9090
@@ -4608,6 +4608,8 @@ parameters:
   value: 1024Mi
 - name: THANOS_QUERY_FRONTEND_QUERY_CACHE_MEMORY_LIMIT_MB
   value: "1024"
+- name: THANOS_QUERY_FRONTEND_LOG_LEVEL
+  value: debug
 - name: THANOS_RECEIVE_CONTROLLER_IMAGE_TAG
   value: master-2019-10-18-d55fee2
 - name: THANOS_RECEIVE_CONTROLLER_IMAGE

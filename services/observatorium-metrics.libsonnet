@@ -731,6 +731,7 @@ local oauthProxy = import './sidecars/oauth-proxy.libsonnet';
         thanos.query.service.spec.ports[1].port,
       ],
       serviceMonitor: true,
+      logLevel: '${THANOS_QUERY_FRONTEND_LOG_LEVEL}',
       queryRangeCache: {
         type: 'memcached',
         config: {
